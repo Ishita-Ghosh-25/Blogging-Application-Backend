@@ -16,6 +16,7 @@ import com.javabackend.blog.entities.Post;
 import com.javabackend.blog.entities.User;
 import com.javabackend.blog.exceptions.ResourceNotFoundException;
 import com.javabackend.blog.payloads.PostDto;
+import com.javabackend.blog.payloads.PostResponse;
 import com.javabackend.blog.repositories.CategoryRepo;
 import com.javabackend.blog.repositories.PostRepo;
 import com.javabackend.blog.repositories.UserRepo;
@@ -69,15 +70,26 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<PostDto> getAllPost(Integer pageNumber, Integer pageSize) {
-		System.out.println("-----Page Number--" + pageNumber + "----Page Size Is ------" + pageSize);
+	public PostResponse getAllPost(Integer pageNumber, Integer pageSize) {
+		//System.out.println("-----Page Number--" + pageNumber + "----Page Size Is ------" + pageSize);
 		
 		Pageable p = PageRequest.of(pageNumber, pageSize);
 		
 		Page<Post> pagePost = this.postRepo.findAll(p);
 		List<Post> allPosts = pagePost.getContent();
-		List<PostDto> postDtos = allPosts.stream().map((post)->this.modelMapper.map(post, PostDto.class)).collect(Collectors.toList());
-		return postDtos;
+		List<PostDto> postDtos = allPosts.stream().map((post)->this.modelMapper.map(post, PostDto.class))
+				.collect(Collectors.toList());
+		
+		PostResponse postResponse = new PostResponse();
+		
+		postResponse.setContent(postDtos);
+		postResponse.setPageNumber(pagePost.getNumber());
+		postResponse.setPageSize(pagePost.getSize());
+		postResponse.setTotalElements(pagePost.getTotalElements());
+		postResponse.setTotalPages(pagePost.getTotalPages());
+		postResponse.setLastPage(pagePost.isLast());
+		
+		return postResponse;
 	}
 
 	@Override
