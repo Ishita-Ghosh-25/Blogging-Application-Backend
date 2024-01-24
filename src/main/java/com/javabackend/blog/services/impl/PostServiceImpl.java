@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import com.javabackend.blog.entities.Category;
 import com.javabackend.blog.entities.Post;
@@ -70,15 +71,22 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public PostResponse getAllPost(Integer pageNumber, Integer pageSize) {
+	public PostResponse getAllPost(Integer pageNumber, Integer pageSize, String sortBy, String sortDir) {
 		//System.out.println("-----Page Number--" + pageNumber + "----Page Size Is ------" + pageSize);
 		
-		Pageable p = PageRequest.of(pageNumber, pageSize);
+		Sort sort = null;
+		if(sortDir.equalsIgnoreCase("asc"))
+		{
+			sort = Sort.by(sortBy).ascending();
+		}else {
+			sort = Sort.by(sortBy).descending();
+		}
+		
+		Pageable p = PageRequest.of(pageNumber, pageSize, sort);
 		
 		Page<Post> pagePost = this.postRepo.findAll(p);
 		List<Post> allPosts = pagePost.getContent();
-		List<PostDto> postDtos = allPosts.stream().map((post)->this.modelMapper.map(post, PostDto.class))
-				.collect(Collectors.toList());
+		List<PostDto> postDtos = allPosts.stream().map((post)->this.modelMapper.map(post, PostDto.class)).collect(Collectors.toList());
 		
 		PostResponse postResponse = new PostResponse();
 		
