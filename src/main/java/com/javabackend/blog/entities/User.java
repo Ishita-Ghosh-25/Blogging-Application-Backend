@@ -1,6 +1,8 @@
 package com.javabackend.blog.entities;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -35,4 +37,7 @@ public class User {
 	
 	@OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
 	private List<Post> posts = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)// To create foreign key in Comment Table Only
+	private Set<Comment> comments = new HashSet<>();
 }
