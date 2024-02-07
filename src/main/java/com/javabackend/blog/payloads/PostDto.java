@@ -35,6 +35,8 @@ public class PostDto {
 
 	private UserDto user;
 	
-	private Set<Comment> comments = new HashSet<>();
+	//When we will fetch post we will automatically get the comments in that section
+	
+	private Set<CommentDto> comments = new HashSet<>();
 	
 }
